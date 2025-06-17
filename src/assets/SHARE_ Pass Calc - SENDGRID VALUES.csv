@@ -1,0 +1,29 @@
+variableName,exampleValue,description
+userFirstName,Maureen,user's first name submitted in the form
+userEmail,maureen@example.com,user's email submitted in the form
+individualTickets.totalPrice,$356.00,total cost of selected attractions if bought individually
+passRecommendation.passType,go_city,Internal ID (go_city or sightseeing)
+passRecommendation.passName,Go City 3-Attraction Pass,Display label for pass
+passRecommendation.passAttractionCount,3,Number of attractions covered by the pass
+passRecommendation.passPrice,109,Price of the pass (based on adult)
+passRecommendation.passLink,https://...,Affiliate/pass purchase link
+passRecommendation.passImage,https://...,Image of the recommended pass
+passRecommendation.extraTicketsPrice,52.26,Price of the individual tickets for attractions not included
+passRecommendation.totalPrice,161.26,Combined total (pass + extra tickets)
+passRecommendation.totalSavingsAmount,33.74,Total savings vs. individual ticket total
+passRecommendation.totalSavingsPercent,17.3,Total savings in percent
+passRecommendation.attractionsIncluded,"[""Empire State Building"", ""Top of the Rock"", ""Edge Ohne Buchung""]",Attractions covered by the pass
+passRecommendation.attractionsNotIncluded,"[""SUMMIT One Vanderbilt""]","Attractions not covered, need separate tickets"
+passRecommendation.extraTicketsLinks,"[{""name"": ""SUMMIT One Vanderbilt"", ""price"": 52.26, ""link"": ""https://www.getyourguide.com/...""}]",Optional: structured data for email templating with links
+dayPassOptions.passType,go_city,Internal ID used for logic
+dayPassOptions.passName,Go City,Display name for email
+dayPassOptions.days,2,Day pass duration
+dayPassOptions.dayPassPrice,214,Total cost of the day pass (1 adult)
+dayPassOptions.extraTicketsPrice,52.26,Total price for attractions not included in the pass
+dayPassOptions.totalWithExtra,266.26,Combined total (pass + extra)
+dayPassOptions.savingsAbsolute,30.74,Absolute savings vs. individual tickets
+dayPassOptions.savingsPercent,10.34,Savings in % vs. individual tickets
+dayPassOptions.link,https://...,Link to purchase the day pass
+dayPassOptions.image,https://...,Image for email display
+dayPassOptions.attractionsIncluded,"Empire State Building, Edge",List of attractions covered by pass
+dayPassOptions.attractionsNotIncluded,SUMMIT One Vanderbilt,List of extra ticket attractions

@@ -1,0 +1,32 @@
+German,English
+New York Pass Profi,New York Pass Pro
+So funktioniert's,How it works
+Wähle mindestens zwei Attraktionen aus. Der Pass Profi errechnet dir dann das günstigste Ergebnis! Das kann ein Rabattpass sein oder eine Kombination aus Pass und Einzeltickets.,Select at least 2 attractions. The Pass Pro will then calculate the cheapest option for you! That can be a pass or a combination of a pass and additional tickets.
+Top Attraktionen,Top Attractions
+Bootsfahrten,River Cruises
+Museen,Museums
+Erlebnisse,Experiences
+Bus Touren,Bus Tours
+Fahrrad Touren & Verleihe,Bike Tours & Rentals
+Geführte Touren,Guided Tours
+Jetzt losrechnen »,Calculate now »
+Einzeltickets,Individual Tickets
+Gesamtpreis,Total Price
+Hier kaufen »,Buy here »
+Passempfehlung,Pass Recommendation
+Preis ohne Pass,Price without pass
+Pass kaufen »,Buy Pass »
+Enthaltene Attraktionen,Included attractions
+Extratickets,Additional tickets
+Kaufe diese Tickets zusätzlich. Sie sind entweder nicht im Pass enthalten oder separat günstiger,Buy these tickets separately. They are either not included in the pass or cheaper alone
+Tagespass,Day Pass
+"Statt dem {{passRecommendation.passName}}, könnte für dich der {{dayPassOptions.passName}} für {{dayPassOptions.days}} Tage Sinn ergeben, wenn du vorhast alle Attraktionen in {{dayPassOptions.days}} oder weniger Tagen anzusehen","Instead of the {{passRecommendation.passName}}, consider the {{dayPassOptions.passName}} for {{dayPassOptions.days}} day(s), if you plan to visit the attractions within {{dayPassOptions.days}} day(s) or less."
+Erhalte dein Pass Profi Ergebnis per E-Mail!,Receive your Pass Pro Result via E-Mail!
+Vorname,Name
+E-Mail Adresse,E-Mail
+Absenden »,Send »
+Alle meine E-Mails sind für dich kostenlos. Du kannst dich jederzeit abmelden. Schaue dir dazu gerne die Datenschutzerklärung an.,All emails you receive are free. You can unsubscribe any time. Read our data policy.
+"Deine ausgewählten Attraktionen kosten insgesamt {{individualTickets.totalPrice}}, wenn du einzelne Tickets kaufst. Mit der Kombination aus {{passRecommendation.passName}} und Extratickets ({{passRecommendation.attractionsNotIncluded}}) maximierst du dein Ersparnis. Insgesamt liegst du so bei nur {{passRecommendation.totalPrice}}. Du sparst bis zu {{passRecommendation.totalSavingsAmount}} bzw. {{passRecommendation.totalSavingsPercent}}!","Your selected attractions cost {{individualTickets.totalPrice}}, if you purchase all tickets individually. With the combination of {{passRecommendation.passName}} and additional tickets ({{passRecommendation.attractionsNotIncluded}}), you maximize your savings. In total, you pay only {{passRecommendation.totalPrice}}. You save {{passRecommendation.totalSavingsAmount}} or {{passRecommendation.totalSavingsPercent}}!"
+Wähle mindestens 2 Attraktionen aus,Select at least 2 attractions
+"Hier lohnt sich kein Pass. Es ist günstiger, alle Tickets einzeln zu kaufen",A pass is not worthwile for your selection. It's cheapest for you to buy individual tickets
+Ein Tagespass lohnt sich für deine Auswahl nicht,No day pass is worth it for your selection
