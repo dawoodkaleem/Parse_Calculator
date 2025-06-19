@@ -120,14 +120,13 @@ export const getAttractionsByCategorySearch = async (req, res) => {
       pass_price_adult: attraction.pass_price_adult,
       Imagelink: attraction.Imagelink,
       pass_link: lang === 'en' ? attraction.en_pass_affiliate_link : attraction.de_pass_affiliate_link,
-      passes: {
-        gocity_day_pass: attraction.gocity_day_pass,
-        gocity_flex_pass: attraction.gocity_flex_pass,
-        sightseeing_day_pass: attraction.sightseeing_day_pass,
-        sightseeing_flex_pass: attraction.sightseeing_flex_pass,
-        sightseeing_economy_pay_day_pass: attraction.sightseeing_economy_pay_day_pass,
-        sightseeing_economy_pay_flex_pass: attraction.sightseeing_economy_pay_flex_pass
-      }
+      gocity_day_pass: attraction.gocity_day_pass,
+      gocity_flex_pass: attraction.gocity_flex_pass,
+      sightseeing_day_pass: attraction.sightseeing_day_pass,
+      sightseeing_flex_pass: attraction.sightseeing_flex_pass,
+      sightseeing_economy_pay_day_pass: attraction.sightseeing_economy_pay_day_pass,
+      sightseeing_economy_pay_flex_pass: attraction.sightseeing_economy_pay_flex_pass
+
     }));
     res.status(200).json({ category: category[lang === 'en' ? 'en_name' : 'de_name'], attractions });
   } catch (error) {
