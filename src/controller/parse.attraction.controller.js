@@ -4,7 +4,8 @@ import {
   createAttractionService, updateAttractionService, deleteAttractionService
 } from '../services/attraction.services.js';
 
-
+import Category from '../models/attraction.categorie.js';
+import Attraction from '../models/attraction.model.js';
 export const importAttractions = async (req, res) => {
   try {
     const result = await importAttractionsService();
@@ -20,249 +21,6 @@ export const importAttractions = async (req, res) => {
 
 
 
-// export const getAttractionById = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const lang = req.query.lang?.toLowerCase() === 'de' ? 'de' : 'en';
-
-//     const attraction = await ParseAttraction.findOne({ attractionId: id }).populate('category');
-
-//     if (!attraction) {
-//       return res.status(404).json({ error: 'Attraction not found' });
-//     }
-
-//     const response = {
-//       attractionId: attraction.attractionId,
-//       attraction_name: lang === 'en' ? attraction.en_attraction_name : attraction.de_attraction_name,
-//       pass_price_adult: attraction.pass_price_adult,
-//       Imagelink: attraction.Imagelink,
-//       gocity_day_pass: attraction.gocity_day_pass,
-//       gocity_flex_pass: attraction.gocity_flex_pass,
-//       sightseeing_day_pass: attraction.sightseeing_day_pass,
-//       sightseeing_flex_pass: attraction.sightseeing_flex_pass,
-//       sightseeing_economy_pay_day_pass: attraction.sightseeing_economy_pay_day_pass,
-//       sightseeing_economy_pay_flex_pass: attraction.sightseeing_economy_pay_flex_pass,
-//       pass_affiliate_link: lang === 'en' ? attraction.en_pass_affiliate_link : attraction.de_pass_affiliate_link,
-//       category: {
-//         _id: attraction.category?._id,
-//         name: lang === 'en' ? attraction.category?.en_name : attraction.category?.de_name
-//       }
-//     };
-
-//     res.status(200).json(response);
-//   } catch (err) {
-//     console.error('Error getting attraction by ID:', err.message);
-//     res.status(500).json({ error: 'Server error while fetching attraction' });
-//   }
-// };
-
-// export const createAttraction = async (req, res) => {
-//   const { attractionId,
-//     en_attraction_name,
-//     de_attraction_name,
-//     pass_price_adult,
-//     Imagelink,
-//     gocity_day_pass,
-//     gocity_flex_pass,
-//     sightseeing_day_pass,
-//     sightseeing_flex_pass,
-//     sightseeing_economy_pay_day_pass,
-//     sightseeing_economy_pay_flex_pass,
-//     en_pass_affiliate_link,
-//     de_pass_affiliate_link,
-//     category
-//   } = req.body;
-
-//   if (!attractionId || !en_attraction_name || !de_attraction_name || !category) {
-//     return res.status(400).json({
-//       error: 'Missing required fields: attractionId, en_attraction_name, de_attraction_name, category'
-//     });
-//   }
-//   try {
-
-//     const existingAttraction = await ParseAttraction.findOne({ attractionId });
-//     if (existingAttraction) {
-//       return res.status(409).json({ error: 'Attraction with this ID already exists' });
-//     }
-//     const categoryExists = await Category.findById(category);
-//     if (!categoryExists) {
-//       return res.status(400).json({ error: 'Category not found. Please provide a valid category ID.' });
-//     }
-//     const newAttraction = new ParseAttraction({
-//       attractionId,
-//       en_attraction_name,
-//       de_attraction_name,
-//       pass_price_adult: pass_price_adult,
-//       Imagelink: Imagelink || '',
-//       gocity_day_pass: gocity_day_pass || false,
-//       gocity_flex_pass: gocity_flex_pass || false,
-//       sightseeing_day_pass: sightseeing_day_pass || false,
-//       sightseeing_flex_pass: sightseeing_flex_pass || false,
-//       sightseeing_economy_pay_day_pass: sightseeing_economy_pay_day_pass || false,
-//       sightseeing_economy_pay_flex_pass: sightseeing_economy_pay_flex_pass || false,
-//       en_pass_affiliate_link: en_pass_affiliate_link || '',
-//       de_pass_affiliate_link: de_pass_affiliate_link || '',
-//       category: category
-//     });
-//     const savedAttraction = await newAttraction.save();
-
-
-//     await savedAttraction.populate('category');
-
-
-//     const lang = req.query.lang?.toLowerCase() === 'de' ? 'de' : 'en';
-
-
-//     const response = {
-//       attractionId: savedAttraction.attractionId,
-//       en_attraction_name: savedAttraction.en_attraction_name,
-//       de_attraction_name: savedAttraction.de_attraction_name,
-//       pass_price_adult: savedAttraction.pass_price_adult,
-//       Imagelink: savedAttraction.Imagelink,
-//       gocity_day_pass: savedAttraction.gocity_day_pass,
-//       gocity_flex_pass: savedAttraction.gocity_flex_pass,
-//       sightseeing_day_pass: savedAttraction.sightseeing_day_pass,
-//       sightseeing_flex_pass: savedAttraction.sightseeing_flex_pass,
-//       sightseeing_economy_pay_day_pass: savedAttraction.sightseeing_economy_pay_day_pass,
-//       sightseeing_economy_pay_flex_pass: savedAttraction.sightseeing_economy_pay_flex_pass,
-//       pass_affiliate_link: lang === 'en' ? savedAttraction.en_pass_affiliate_link : savedAttraction.de_pass_affiliate_link,
-//       category: {
-//         _id: savedAttraction.category?._id,
-//         name: lang === 'en' ? savedAttraction.category?.en_name : savedAttraction.category?.de_name
-//       }
-//     };
-
-//     res.status(201).json(response);
-//   } catch (error) {
-//     res.status(500).json({ error: 'Server error while creating attraction' });
-//   }
-// }
-
-// export const updateAttraction = async (req, res) => {
-//   const {
-//     en_attraction_name,
-//     de_attraction_name,
-//     pass_price_adult,
-//     Imagelink,
-//     gocity_day_pass,
-//     gocity_flex_pass,
-//     sightseeing_day_pass,
-//     sightseeing_flex_pass,
-//     sightseeing_economy_pay_day_pass,
-//     sightseeing_economy_pay_flex_pass,
-//     en_pass_affiliate_link,
-//     de_pass_affiliate_link,
-//     category
-//   } = req.body;
-
-//   const { id } = req.params; // attractionId from URL params
-
-//   // Check if request body is empty
-//   if (Object.keys(req.body).length === 0) {
-//     return res.status(400).json({ error: 'No update data provided' });
-//   }
-
-//   try {
-//     // Check if attraction exists
-//     const existingAttraction = await ParseAttraction.findOne({ attractionId: id });
-//     if (!existingAttraction) {
-//       return res.status(404).json({ error: 'Attraction not found' });
-//     }
-
-//     // If category is being updated, validate it exists
-//     if (category) {
-//       const categoryExists = await Category.findById(category);
-//       if (!categoryExists) {
-//         return res.status(400).json({ error: 'Category not found. Please provide a valid category ID.' });
-//       }
-//     }
-
-//     // Prepare update data (only include fields that are provided)
-//     const updateData = {};
-
-//     if (en_attraction_name !== undefined) updateData.en_attraction_name = en_attraction_name;
-//     if (de_attraction_name !== undefined) updateData.de_attraction_name = de_attraction_name;
-//     if (pass_price_adult !== undefined) updateData.pass_price_adult = pass_price_adult;
-//     if (Imagelink !== undefined) updateData.Imagelink = Imagelink;
-//     if (gocity_day_pass !== undefined) updateData.gocity_day_pass = gocity_day_pass;
-//     if (gocity_flex_pass !== undefined) updateData.gocity_flex_pass = gocity_flex_pass;
-//     if (sightseeing_day_pass !== undefined) updateData.sightseeing_day_pass = sightseeing_day_pass;
-//     if (sightseeing_flex_pass !== undefined) updateData.sightseeing_flex_pass = sightseeing_flex_pass;
-//     if (sightseeing_economy_pay_day_pass !== undefined) updateData.sightseeing_economy_pay_day_pass = sightseeing_economy_pay_day_pass;
-//     if (sightseeing_economy_pay_flex_pass !== undefined) updateData.sightseeing_economy_pay_flex_pass = sightseeing_economy_pay_flex_pass;
-//     if (en_pass_affiliate_link !== undefined) updateData.en_pass_affiliate_link = en_pass_affiliate_link;
-//     if (de_pass_affiliate_link !== undefined) updateData.de_pass_affiliate_link = de_pass_affiliate_link;
-//     if (category !== undefined) updateData.category = category;
-
-//     // Update the attraction
-//     const updatedAttraction = await ParseAttraction.findOneAndUpdate(
-//       { attractionId: id },
-//       { $set: updateData },
-//       {
-//         new: true, // Return updated document
-//         runValidators: true // Run schema validators
-//       }
-//     );
-
-//     // Populate category
-//     await updatedAttraction.populate('category');
-
-//     // Get language preference
-//     const lang = req.query.lang?.toLowerCase() === 'de' ? 'de' : 'en';
-
-//     // Format response similar to create function
-//     const response = {
-//       attractionId: updatedAttraction.attractionId,
-//       attraction_name: lang === 'en' ? updatedAttraction.en_attraction_name : updatedAttraction.de_attraction_name,
-//       pass_price_adult: updatedAttraction.pass_price_adult,
-//       Imagelink: updatedAttraction.Imagelink,
-//       gocity_day_pass: updatedAttraction.gocity_day_pass,
-//       gocity_flex_pass: updatedAttraction.gocity_flex_pass,
-//       sightseeing_day_pass: updatedAttraction.sightseeing_day_pass,
-//       sightseeing_flex_pass: updatedAttraction.sightseeing_flex_pass,
-//       sightseeing_economy_pay_day_pass: updatedAttraction.sightseeing_economy_pay_day_pass,
-//       sightseeing_economy_pay_flex_pass: updatedAttraction.sightseeing_economy_pay_flex_pass,
-//       pass_affiliate_link: lang === 'en' ? updatedAttraction.en_pass_affiliate_link : updatedAttraction.de_pass_affiliate_link,
-//       category: {
-//         _id: updatedAttraction.category?._id,
-//         name: lang === 'en' ? updatedAttraction.category?.en_name : updatedAttraction.category?.de_name
-//       }
-//     };
-
-//     res.status(200).json(response);
-//   } catch (error) {
-//     console.error('Error updating attraction:', error.message);
-//     res.status(500).json({ error: 'Server error while updating attraction' });
-//   }
-// };
-
-// export const deleteAttraction = async (req, res) => {
-//   const { id } = req.params; // attractionId from URL params
-
-//   try {
-//     // Check if attraction exists
-//     const existingAttraction = await ParseAttraction.findOne({ attractionId: id });
-//     if (!existingAttraction) {
-//       return res.status(404).json({ error: 'Attraction not found' });
-//     }
-
-//     // Delete the attraction
-//     await ParseAttraction.findOneAndDelete({ attractionId: id });
-
-//     // Return success response
-//     res.status(200).json({
-//       success: true,
-//       message: 'Attraction deleted successfully',
-//       attractionId: id
-//     });
-//   } catch (error) {
-//     console.error('Error deleting attraction:', error.message);
-//     res.status(500).json({
-//       error: 'Server error while deleting attraction',
-//       details: error.message
-//     });
-//   }
-// };
 
 export const getAttractions = async (req, res) => {
   try {
@@ -331,6 +89,52 @@ export const deleteAttraction = async (req, res) => {
   res.status(200).json(result);
 };
 
+export const getAttractionsByCategorySearch = async (req, res) => {
+  let { lang, search } = req.query;
+  lang = lang?.toLowerCase() || 'en';
+  if (!lang || !['en', 'de'].includes(lang)) {
+    return res.status(400).json({ error: 'Invalid or missing language. Use "en" or "de"' });
+  }
+
+  if (!search || typeof search !== 'string') {
+    return res.status(400).json({ error: 'Search query is required and must be a string' });
+  }
+
+  try {
+    // Find category by language name
+    const category = await Category.findOne({
+      [lang === 'en' ? 'en_name' : 'de_name']: { $regex: new RegExp(search, 'i') }
+    });
+
+
+    if (!category) {
+      return res.status(404).json({ message: 'Category not found' });
+    }
+
+    // Find attractions by category _id
+    const allAttractions = await Attraction.find({ category: category._id });
+
+    const attractions = allAttractions.map(attraction => ({
+      attractionId: attraction.attractionId,
+      name: lang === 'en' ? attraction.en_attraction_name : attraction.de_attraction_name,
+      pass_price_adult: attraction.pass_price_adult,
+      Imagelink: attraction.Imagelink,
+      pass_link: lang === 'en' ? attraction.en_pass_affiliate_link : attraction.de_pass_affiliate_link,
+      passes: {
+        gocity_day_pass: attraction.gocity_day_pass,
+        gocity_flex_pass: attraction.gocity_flex_pass,
+        sightseeing_day_pass: attraction.sightseeing_day_pass,
+        sightseeing_flex_pass: attraction.sightseeing_flex_pass,
+        sightseeing_economy_pay_day_pass: attraction.sightseeing_economy_pay_day_pass,
+        sightseeing_economy_pay_flex_pass: attraction.sightseeing_economy_pay_flex_pass
+      }
+    }));
+    res.status(200).json({ category: category[lang === 'en' ? 'en_name' : 'de_name'], attractions });
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
 
 
 // export const getAttractions = async (req, res) => {
@@ -443,3 +247,4 @@ export const deleteAttraction = async (req, res) => {
 //       res.send('CSV data imported successfully');
 //     });
 // }
+

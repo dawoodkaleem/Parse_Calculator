@@ -286,6 +286,7 @@ import { fileURLToPath } from 'url';
 
 import Pass from '../models/passes.model.js';
 import { linkPassesToAttractions } from '../utils/linkPassesToAttractions.js';
+import { getAllPassesService } from '../services/passes.services.js';
 
 
 export const getCheapestPass = async (req, res) => {
@@ -420,14 +421,14 @@ export const importPasses = async (req, res) => {
     .pipe(csv())
     .on('data', (row) => results.push(row))
     .on('end', async () => {
-      console.log(`📥 CSV loaded. Total rows: ${results.length}`);
-      console.log('📄 CSV headers:', Object.keys(results[0]));
+      // console.log(`📥 CSV loaded. Total rows: ${results.length}`);
+      // console.log('📄 CSV headers:', Object.keys(results[0]));
 
       try {
         for (const row of results) {
           const passId = row.passID?.trim();
           if (!passId || (!row.en_passName && !row.de_passName && !row.passPriceAdult)) {
-            console.warn('⚠️ Skipping invalid or empty row:', row);
+            // console.warn('⚠️ Skipping invalid or empty row:', row);
             continue;
           }
 
@@ -455,4 +456,16 @@ export const importPasses = async (req, res) => {
         res.status(500).json({ error: 'Failed to import passes' });
       }
     });
+};
+
+
+
+export const getAllPasses = async (req, res) => {
+  try {
+    const passes = await getAllPassesService();
+    res.status(200).json({ success: true, data: passes });
+  } catch (error) {
+    console.error('❌ Error fetching passes:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch passes' });
+  }
 };

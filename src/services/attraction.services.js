@@ -7,6 +7,89 @@ import Category from '../models/attraction.categorie.js';
 
 const toBoolean = (value) => String(value).trim().toLowerCase() === 'true';
 
+// export const importAttractionsService = () => {
+//   return new Promise((resolve, reject) => {
+//     const results = [];
+
+//     const __filename = fileURLToPath(import.meta.url);
+//     const __dirname = path.dirname(__filename);
+//     const filePath = path.join(__dirname, '..', 'assets', 'ATTRACTIONS.csv');
+
+//     fs.createReadStream(filePath)
+//       .pipe(csv())
+//       .on('data', (row) => {
+//         results.push(row);
+//       })
+//       .on('end', async () => {
+//         try {
+
+//           for (let row of results) {
+//             const enCategoryName = row['en-attractionCategory']?.trim();
+//             const deCategoryName = row['de-attractionCategory']?.trim();
+
+//             if (!enCategoryName && !deCategoryName) {
+//               console.warn('No category names found in row:', row);
+//               continue;
+//             }
+
+//             let category = await Category.findOne({
+//               $or: [
+//                 { en_name: enCategoryName },
+//                 { de_name: deCategoryName },
+//               ],
+//             });
+
+//             if (!category) {
+//               category = new Category({
+//                 en_name: enCategoryName || 'Unknown EN',
+//                 de_name: deCategoryName || 'Unknown DE',
+//               });
+//               await category.save();
+//               console.log(`Created new category: EN="${category.en_name}", DE="${category.de_name}"`);
+//             }
+
+
+//             const exists = await ParseAttraction.findOne({ attractionId: row.attractionId });
+//             if (!exists) {
+//               const rawPrice = row.attractionPriceAdult?.replace('$', '').trim();
+//               const priceAdult = rawPrice && !isNaN(rawPrice) ? parseFloat(rawPrice) : 0;
+
+//               const newAttraction = new ParseAttraction({
+//                 attractionId: row.attractionId,
+//                 en_attraction_name: row.en_attractionName,
+//                 de_attraction_name: row.de_attractionName,
+//                 pass_price_adult: priceAdult, // ✅ Corrected line
+//                 category: category._id,
+//                 gocity_day_pass: toBoolean(row.gocityDayPass),
+//                 gocity_flex_pass: toBoolean(row.gocityFlexPass),
+//                 sightseeing_day_pass: toBoolean(row.sightseeingDayPass),
+//                 sightseeing_flex_pass: toBoolean(row.sightseeingFlexPass),
+//                 sightseeing_economy_pay_day_pass: toBoolean(row.sightseeingEconomyDayPass),
+//                 sightseeing_economy_pay_flex_pass: toBoolean(row.sightseeingEconomyFlexPass), // fixed case here too
+//                 de_pass_affiliate_link: row.de_attractionAffiliateLink,
+//                 en_pass_affiliate_link: row.en_attractionAffiliateLink,
+//                 Imagelink: row.attractionImageLink,
+//               });
+
+//               await newAttraction.save();
+//               console.log(`Inserted attraction: ${row.attractionId}`);
+//             }
+//           }
+
+//           console.log('✅ CSV import completed');
+//           resolve('CSV data imported successfully');
+//         } catch (err) {
+//           console.error('❌ Error inserting attractions:', err.message);
+//           reject(err);
+//         }
+//       })
+//       .on('error', (err) => {
+//         console.error('❌ CSV read error:', err.message);
+//         reject(err);
+//       });
+//   });
+// };
+
 export const importAttractionsService = () => {
   return new Promise((resolve, reject) => {
     const results = [];
@@ -49,6 +132,16 @@ export const importAttractionsService = () => {
 
             const exists = await ParseAttraction.findOne({ attractionId: row.attractionId });
             if (!exists) {
+              // ✅ PLACE THIS DEBUG LOG HERE
+              console.log("🔍 Flags for:", row.attractionId, {
+                gocityDayPass: row.gocityDayPass,
+                gocityFlexPass: row.gocityFlexPass,
+                sightseeingDayPass: row.sightseeingDayPass,
+                sightseeingFlexPass: row.sightseeingFlexPass,
+                sightseeingEconomyDayPass: row.sightseeingEconomyDayPass,
+                sightseeingEconomyFlexPass: row.sightseeingEconomyFlexPass,
+              });
+
               const rawPrice = row.attractionPriceAdult?.replace('$', '').trim();
               const priceAdult = rawPrice && !isNaN(rawPrice) ? parseFloat(rawPrice) : 0;
 
@@ -56,25 +149,25 @@ export const importAttractionsService = () => {
                 attractionId: row.attractionId,
                 en_attraction_name: row.en_attractionName,
                 de_attraction_name: row.de_attractionName,
-                pass_price_adult: priceAdult, // ✅ Corrected line
+                pass_price_adult: priceAdult,
                 category: category._id,
                 gocity_day_pass: toBoolean(row.gocityDayPass),
                 gocity_flex_pass: toBoolean(row.gocityFlexPass),
                 sightseeing_day_pass: toBoolean(row.sightseeingDayPass),
                 sightseeing_flex_pass: toBoolean(row.sightseeingFlexPass),
                 sightseeing_economy_pay_day_pass: toBoolean(row.sightseeingEconomyDayPass),
-                sightseeing_economy_pay_flex_pass: toBoolean(row.sightseeingEconomyflexPass),
+                sightseeing_economy_pay_flex_pass: toBoolean(row.sightseeingEconomyFlexPass),
                 de_pass_affiliate_link: row.de_attractionAffiliateLink,
                 en_pass_affiliate_link: row.en_attractionAffiliateLink,
                 Imagelink: row.attractionImageLink,
               });
 
               await newAttraction.save();
-              console.log(`Inserted attraction: ${row.attractionId}`);
+              console.log(`✅ Inserted attraction: ${row.attractionId}`);
             }
           }
 
-          console.log('✅ CSV import completed');
+          console.log('🎉 CSV import completed');
           resolve('CSV data imported successfully');
         } catch (err) {
           console.error('❌ Error inserting attractions:', err.message);
@@ -87,7 +180,6 @@ export const importAttractionsService = () => {
       });
   });
 };
-
 
 
 export const getAttractionsService = async (lang = 'en') => {
