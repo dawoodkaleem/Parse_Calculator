@@ -1,6 +1,3 @@
-// import Attraction from '../models/attraction.model.js';
-// import Pass from '../models/passes.model.js';
-// import PassAttraction from '../models/pass.attaction.model.js';
 
 // export const linkPassesToAttractions = async () => {
 //   const flagToPassPrefix = {
@@ -69,92 +66,11 @@
 //   console.log(`✅ Linked ${linkCount} pass-attraction pairs`);
 // };
 
+// This One Work but it save all value like passes like --1,2,3,4,5,6
 
-import Pass from '../models/passes.model.js';
-import Attraction from '../models/pass.attaction.model.js';
-import PassAttraction from '../models/pass.attaction.model.js';
-
-// const flagToPassIdMap = {
-//   gocity_day_pass: 'gocity-day-pass',
-//   gocity_flex_pass: 'gocity-flex-pass',
-//   sightseeing_day_pass: 'sightseeing-day-pass',
-//   sightseeing_flex_pass: 'sightseeing-flex-pass',
-//   sightseeing_economy_pay_day_pass: 'sightseeing-economy-pay-day-pass',
-//   sightseeing_economy_pay_flex_pass: 'sightseeing-economy-pay-flex-pass',
-// };
-
-// export const linkPassesToAttractions = async () => {
-//   try {
-//     const attractions = await Attraction.find();
-//     const passLinks = {}; // { passId: Set of attractionIds }
-
-//     for (const attraction of attractions) {
-//       for (const [flag, passId] of Object.entries(flagToPassIdMap)) {
-//         if (attraction[flag] === true) {
-//           if (!passLinks[passId]) {
-//             passLinks[passId] = new Set();
-//           }
-//           passLinks[passId].add(attraction.attractionId); // use attractionId (string)
-//         }
-//       }
-//     }
-
-//     for (const [passId, attractionSet] of Object.entries(passLinks)) {
-//       const attractionIds = Array.from(attractionSet);
-
-//       await PassAttraction.updateOne(
-//         { passId },
-//         { $addToSet: { attractions: { $each: attractionIds } } },
-//         { upsert: true }
-//       );
-
-//       console.log(`✅ Linked ${passId} → ${attractionIds.length} attractions`);
-//     }
-
-//     console.log("🎉 Pass-attraction linking complete!");
-//   } catch (error) {
-//     console.error("❌ Error generating links:", error);
-//   }
-// };
-
-
-
-// export const linkPassesToAttractions = async () => {
-//   try {
-//     const passes = await Pass.find();
-//     const attractions = await Attraction.find();
-
-//     for (const pass of passes) {
-//       const baseId = pass.passId.split('--')[0]; // e.g., sightseeing-pass-flex
-
-//       const matchingFlag = baseIdToFlagMap[baseId];
-
-//       if (!matchingFlag) {
-//         console.warn(`⚠️ No matching flag for passId: ${pass.passId}`);
-//         continue;
-//       }
-
-//       const matchingAttractions = attractions.filter(attr => attr[matchingFlag] === true);
-
-//       const attractionIds = matchingAttractions.map(attr => attr.attractionId); // use attractionId (string)
-
-//       await PassAttraction.updateOne(
-//         { passId: baseId },
-//         { $addToSet: { attractions: { $each: attractionIds } } },
-//         { upsert: true }
-//       );
-
-//       console.log(`✅ Linked ${baseId} → ${attractionIds.length} attractions`);
-//     }
-
-//     console.log("🎉 PassAttraction linking completed!");
-//   } catch (error) {
-//     console.error("❌ Error during linking:", error);
-//   }
-// };
-
-
-
+// import Pass from '../models/passes.model.js';
+// import Attraction from '../models/attraction.model.js';
+// import PassAttraction from '../models/pass.attaction.model.js';
 
 // const baseIdToFlagMap = {
 //   'gocity-day': 'gocity_day_pass',
@@ -166,54 +82,47 @@ import PassAttraction from '../models/pass.attaction.model.js';
 // };
 
 // export const linkPassesToAttractions = async () => {
-try {
-  const passes = await Pass.find();
-  const attractions = await Attraction.find();
+//   try {
+//     const attractions = await Attraction.find();
+//     const passes = await Pass.find();
 
-  // ✅ DEBUG CHECK: Is the sightseeing_day_pass flag working?
-  const test = await Attraction.find({ sightseeing_day_pass: true });
-  console.log("🔍 [DEBUG] Matched attractions for sightseeing_day_pass:", test.length);
-  if (test.length > 0) console.log("🧪 Sample:", test[0].attractionId);
+//     for (const pass of passes) {
+//       const fullPassId = pass.passId; // e.g., gocity-flex--2
+//       const baseId = fullPassId.split('--')[0]; // e.g., gocity-flex
+//       const flagField = baseIdToFlagMap[baseId]; // e.g., gocity_flex_pass
 
+//       if (!flagField) {
+//         console.warn(`⚠️ No matching flag for baseId: ${baseId}`);
+//         continue;
+//       }
 
+//       // Find attractions where that flag is true
+//       const matchedAttractions = attractions.filter(attr => attr[flagField] === true);
+//       const attractionIds = matchedAttractions.map(attr => attr.attractionId);
 
-  for (const pass of passes) {
-    const baseId = pass.passId.split('--')[0]; // e.g., sightseeing-pass-flex
-    const matchingFlag = baseIdToFlagMap[baseId];
+//       if (attractionIds.length === 0) {
+//         console.warn(`⚠️ No attractions matched for ${fullPassId}`);
+//       } else {
+//         console.log(`✅ Linked ${fullPassId} with ${attractionIds.length} attractions`);
 
-    console.log(`\n🔍 Checking Pass: ${pass.passId}`);
-    console.log(`➡️ Base ID: ${baseId}`);
-    console.log(`🧩 Matching Flag: ${matchingFlag}`);
+//         await PassAttraction.updateOne(
+//           { passId: fullPassId }, // ✅ save using full ID like gocity-flex--2
+//           { $addToSet: { attractions: { $each: attractionIds } } },
+//           { upsert: true }
+//         );
+//       }
+//     }
 
-    if (!matchingFlag) {
-      console.warn(`⚠️ No matching flag found for passId: ${pass.passId}`);
-      continue;
-    }
-
-    const matchingAttractions = attractions.filter(attr => attr[matchingFlag] === true);
-    const attractionIds = matchingAttractions.map(attr => attr.attractionId);
-
-    if (attractionIds.length === 0) {
-      console.warn(`⚠️ No attractions matched for flag: ${matchingFlag}`);
-    } else {
-      console.log(`✅ ${attractionIds.length} attractions matched for ${pass.passId}`);
-      console.log(`🔗 Sample attraction IDs:`, attractionIds.slice(0, 5)); // show first 5
-    }
-
-    await PassAttraction.updateOne(
-      { passId: baseId },
-      { $addToSet: { attractions: { $each: attractionIds } } },
-      { upsert: true }
-    );
-
-    console.log(`📌 Saved ${attractionIds.length} linked attractions for "${baseId}"`);
-  }
-
-  console.log("\n🎉 PassAttraction linking completed!");
-} catch (error) {
-  console.error("❌ Error during linking:", error);
-}
+//     console.log("\n🎉 All pass-attraction links created successfully!");
+//   } catch (error) {
+//     console.error("❌ Error in linking:", error);
+//   }
 // };
+
+
+import Pass from '../models/passes.model.js';
+import Attraction from '../models/attraction.model.js';
+import PassAttraction from '../models/pass.attaction.model.js';
 
 const baseIdToFlagMap = {
   'gocity-day': 'gocity_day_pass',
@@ -226,44 +135,33 @@ const baseIdToFlagMap = {
 
 export const linkPassesToAttractions = async () => {
   try {
-    const passes = await Pass.find();
     const attractions = await Attraction.find();
+    const passes = await Pass.find();
 
     for (const pass of passes) {
-      const baseId = pass.passId.split('--')[0];
-      const matchingFlag = baseIdToFlagMap[baseId];
+      const fullPassId = pass.passId; // e.g., sightseeing-pass-flex-economy--2
+      const baseId = fullPassId.split('--')[0]; // e.g., sightseeing-pass-flex-economy
+      const flagField = baseIdToFlagMap[baseId]; // e.g., sightseeing_economy_pay_flex_pass
 
-      console.log(`\n🔍 Checking Pass: ${pass.passId}`);
-      console.log(`➡️ Base ID: ${baseId}`);
-      console.log(`🧩 Matching Flag: ${matchingFlag}`);
-
-      if (!matchingFlag) {
-        console.warn(`⚠️ No matching flag for passId: ${pass.passId}`);
+      if (!flagField) {
+        console.warn(`⚠️ No matching flag for baseId: ${baseId}`);
         continue;
       }
 
-      // 🛠️ Debug flag types for all attractions
-      for (const attr of attractions) {
-        console.log(`🔎 Attraction: ${attr.attractionId} → ${matchingFlag}:`, attr[matchingFlag], '| Type:', typeof attr[matchingFlag]);
-      }
-
-      const matchingAttractions = attractions.filter(attr => attr[matchingFlag] === true);
-      const attractionIds = matchingAttractions.map(attr => attr.attractionId);
+      const matchedAttractions = attractions.filter(attr => attr[flagField] === true);
+      const attractionIds = matchedAttractions.map(attr => attr.attractionId);
 
       if (attractionIds.length === 0) {
-        console.warn(`⚠️ No attractions matched for flag: ${matchingFlag}`);
+        console.warn(`⚠️ No attractions matched for ${baseId}`);
       } else {
-        console.log(`✅ ${attractionIds.length} attractions matched`);
-        console.log(`🔗 Sample attraction IDs:`, attractionIds.slice(0, 5));
+        console.log(`✅ Linking ${baseId} with ${attractionIds.length} attractions`);
+
+        await PassAttraction.updateOne(
+          { passId: baseId }, // 👈 Changed here!
+          { $addToSet: { attractions: { $each: attractionIds } } },
+          { upsert: true }
+        );
       }
-
-      await PassAttraction.updateOne(
-        { passId: baseId },
-        { $addToSet: { attractions: { $each: attractionIds } } },
-        { upsert: true }
-      );
-
-      console.log(`📌 Saved ${attractionIds.length} linked attractions for "${baseId}"`);
     }
 
     console.log("\n🎉 PassAttraction linking completed!");
@@ -271,3 +169,5 @@ export const linkPassesToAttractions = async () => {
     console.error("❌ Error during linking:", error);
   }
 };
+
+
