@@ -287,7 +287,7 @@ import { fileURLToPath } from 'url';
 import Pass from '../models/passes.model.js';
 import { linkPassesToAttractions } from '../utils/linkPassesToAttractions.js';
 import { getAllPassesService } from '../services/passes.services.js';
-
+import ParseAttraction from '../models/pass.attaction.model.js'
 
 export const getCheapestPass = async (req, res) => {
   const lang = req.query.lang?.toLowerCase(); // 'en' or 'de'
@@ -356,56 +356,92 @@ export const getCheapestPass = async (req, res) => {
   }
 };
 
-export const countPassOccurrences = async (req, res) => {
-  const lang = req.query.lang?.toLowerCase();  // 'en' or 'de'
-  const { attractionNames } = req.body;
 
-  if (!Array.isArray(attractionNames) || attractionNames.length === 0) {
-    return res.status(400).json({ error: "Invalid or empty 'attractionNames' array." });
-  }
 
-  const nameField = lang === 'de' ? 'de_attraction_name' : 'en_attraction_name';
-
-  try {
-    const attractions = await ParseAttraction.find({
-      [nameField]: { $in: attractionNames }
-    });
-
-    if (attractions.length === 0) {
-      return res.status(404).json({ error: 'No attractions found' });
-    }
-
-    const passCounts = {};
-
-    // Initialize count for each pass flag
-    for (const flag in passMap) {
-      passCounts[flag] = 0;
-    }
-
-    // Count how many times each pass is available (flag is true)
-    for (const attraction of attractions) {
-      for (const flag in passMap) {
-        if (attraction[flag]) {
-          passCounts[flag]++;
-        }
-      }
-    }
-
-    // Convert to readable output (optional)
-    const result = Object.entries(passCounts).map(([flag, count]) => ({
-      flag,
-      name: passMap[flag],
-      count
-    }));
-
-    return res.json({ passUsageCounts: result });
-
-  } catch (err) {
-    console.error("❌ Error in countPassOccurrences:", err.message);
-    res.status(500).json({ error: "Server error" });
-  }
+const passMap = {
+  gocity_day_pass: "GoCity Day Pass",
+  gocity_flex_pass: "GoCity Flex Pass",
+  sightseeing_day_pass: "Sightseeing Day Pass",
+  sightseeing_flex_pass: "Sightseeing Flex Pass",
+  sightseeing_economy_pay_day_pass: "Sightseeing Economy Day Pass",
+  sightseeing_economy_pay_flex_pass: "Sightseeing Economy Flex Pass"
 };
 
+// export const countPassOccurrences = async (req, res) => {
+//   const { attractionIds } = req.body;
+//   console.log(attractionIds, "Attractions Ids")
+//   if (!Array.isArray(attractionIds) || attractionIds.length === 0) {
+//     return res.status(400).json({ error: "Invalid or empty 'attractionIds' array." });
+//   }
+//   // console.log("Attractions Ids after The first checks ")
+
+//   try {
+//     // ✅ Find attractions by ID (not name)
+//     // const attractions = await ParseAttraction.find({
+//     //   attractionId: { $in: attractionIds }
+//     // });
+//     const passes = await PassAttraction.find({
+//       attractions: { $all: attractionIds }
+//     });
+//     console.log(passes, "Dat dfrom the DB PAssattractions ")
+//     console.log(passes, "Attractions Extracted data from DB")
+//     if (passes.length === 0) {
+//       return res.status(404).json({ error: 'No attractions found for the given IDs.' });
+//     }
+
+//     const passCounts = {};
+
+//     // Initialize pass flags count
+//     for (const flag in passMap) {
+//       passCounts[flag] = 0;
+//     }
+
+//     // Count how many times each pass flag is true
+//     for (const attraction of attractions) {
+//       for (const flag in passMap) {
+//         if (attraction[flag]) {
+//           passCounts[flag]++;
+//         }
+//       }
+//     }
+
+//     // Format result
+//     const result = Object.entries(passCounts).map(([flag, count]) => ({
+//       flag,
+//       name: passMap[flag],
+//       count
+//     }));
+
+//     return res.json({ passUsageCounts: result });
+
+//   } catch (err) {
+//     console.error("❌ Error in countPassOccurrences:", err.message);
+//     return res.status(500).json({ error: "Server error" });
+//   }
+// };
+
+export const countPassOccurrences = async (req, res) => {
+  const { attractionIds } = req.body;
+
+  if (!Array.isArray(attractionIds) || attractionIds.length === 0) {
+    return res.status(400).json({ error: "Please provide a list of attraction IDs." });
+  }
+
+  try {
+    const passes = await ParseAttraction.find({
+      attractions: { $all: attractionIds }
+    });
+
+    res.json({
+      total: passes.length,
+      passes
+    });
+
+  } catch (err) {
+    console.error("❌ Error fetching passes:", err.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
 
 
