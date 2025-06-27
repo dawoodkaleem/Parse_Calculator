@@ -171,3 +171,18 @@ export const linkPassesToAttractions = async () => {
 };
 
 
+
+
+export const sumPassPriceAdult = async (attractionIds) => {
+  if (!Array.isArray(attractionIds) || attractionIds.length === 0) {
+    throw new Error("Attraction IDs must be a non-empty array.");
+  }
+
+  const attractions = await Attraction.find({ _id: { $in: attractionIds } });
+
+  const total = attractions.reduce((sum, attraction) => {
+    return sum + (attraction.pass_price_adult || 0);
+  }, 0);
+
+  return parseFloat(total.toFixed(2));
+};
