@@ -196,14 +196,14 @@ export const getBestMatchingPasses = async (req, res) => {
     const allRequestedAttractionData = await Attraction.find({ attractionId: { $in: attractionIds } });
     const fullPrice = allRequestedAttractionData.reduce((sum, attr) => sum + (attr.pass_price_adult || 0), 0);
 
+    console.log(attractionIds, "Just checking ")
+
     const allMatchingPassAttractions = await PassAttraction.find(
       {
         attractions: { $all: attractionIds },
         passId: { $regex: /day/, $options: 'i' }
       },
-      { passId: 1, _id: 0 }, {
-      passType: 'day' // ✅ Ensure only day-type passes are matched
-    }
+      { passId: 1, _id: 0 }
     );
     console.log(allMatchingPassAttractions, "Hello")
     // const dayPasses = await Pass.find({
@@ -220,7 +220,7 @@ export const getBestMatchingPasses = async (req, res) => {
       _id: 0
     };
 
-
+    let bestDayPass;
     // const dayPasses = await Pass.find(
     //   {
     //     $and: [
@@ -252,42 +252,47 @@ export const getBestMatchingPasses = async (req, res) => {
 
     //   return min;
     // });
+    if (allMatchingPassAttractions.length > 0) {
+      const dayPasses = await Pass.find(
+        {
+          $and: [
+            {
+              $or: allMatchingPassAttractions.map(p => ({
+                passId: { $regex: `^${p.passId}--\\d+$`, $options: 'i' }
+              }))
+            },
+            {
+              priceAdult: { $lt: bestMatch.totalPrice }
+            },
+            {
+              passId: { $regex: /day/i }  // Ensures it's a "day" pass
+            }
+          ]
+        },
+        projection
+      );
 
-    const dayPasses = await Pass.find(
-      {
-        $and: [
-          {
-            $or: allMatchingPassAttractions.map(p => ({
-              passId: { $regex: `^${p.passId}--\\d+$`, $options: 'i' }
-            }))
-          },
-          {
-            priceAdult: { $lt: bestMatch.totalPrice }
-          },
-          {
-            passId: { $regex: /day/i }  // Ensures it's a "day" pass
-          }
-        ]
-      },
-      projection
-    );
 
-    console.log(dayPasses, "hello")
+      bestDayPass = dayPasses?.reduce((best, current) => {
+        const currentDays = parseInt(current.passId.split('--')[1] || '0', 10);
+        const bestDays = best ? parseInt(best.passId.split('--')[1] || '0', 10) : 0;
 
-    const bestDayPass = dayPasses?.reduce((best, current) => {
-      const currentDays = parseInt(current.passId.split('--')[1] || '0', 10);
-      const bestDays = best ? parseInt(best.passId.split('--')[1] || '0', 10) : 0;
+        if (!best) return current;
 
-      if (!best) return current;
+        // Prefer more days first
+        if (currentDays > bestDays) return current;
 
-      // Prefer more days first
-      if (currentDays > bestDays) return current;
+        // If same number of days, pick cheaper one
+        if (currentDays === bestDays && current.priceAdult < best.priceAdult) return current;
 
-      // If same number of days, pick cheaper one
-      if (currentDays === bestDays && current.priceAdult < best.priceAdult) return current;
+        return best;
+      });
+    }
+    else {
+      bestDayPass = null
+    }
+    // console.log(dayPasses, "hello")
 
-      return best;
-    });
 
 
 
